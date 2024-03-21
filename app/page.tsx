@@ -1,95 +1,58 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { Inventory } from "@/types";
+import AddInventoryForm from "../components/AddInventoryForm";
+import EditInventoryForm from "@/components/EditInventoryForm";
 
 export default function Home() {
+  const [inventories, setInventories] = useState<Inventory[]>([]);
+
+  useEffect(() => {
+    axios.get("/api/inventory").then((response) => {
+      setInventories(response.data);
+    });
+  }, []);
+
+  const onDelete = (id: string) => {
+    axios.delete(`/api/inventory/${id}`).then((response) => {
+      setInventories((prevInventories) => prevInventories.filter((inventory) => inventory._id !== id));
+    });
+  };
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <div>
+      <button onClick={() => console.log(inventories)}>CLICK ME</button>
+      <h1>INVENTORY</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {inventories.map((inventory: Inventory) => (
+            <tr>
+              <td>{inventory._id}</td>
+              <td>{inventory.name}</td>
+              <td>{inventory.description}</td>
+              <td>{inventory.quantity}</td>
+              <td>
+                <button onClick={() => onDelete(inventory._id)}>DELETE</button>
+              </td>
+              <td>
+                <EditInventoryForm setInventories={setInventories} id={inventory._id} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <AddInventoryForm setInventories={setInventories} />
+    </div>
   );
 }
