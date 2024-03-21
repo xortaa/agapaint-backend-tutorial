@@ -46,7 +46,7 @@ export default function Home() {
                 <button onClick={() => onDelete(inventory._id)}>DELETE</button>
               </td>
               <td>
-                <EditInventoryForm setInventories={setInventories} id={inventory._id} />
+                <EditInventoryForm setInventories={setInventories} id={inventory._id} inventory={inventory}/>
               </td>
             </tr>
           ))}

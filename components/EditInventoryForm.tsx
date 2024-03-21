@@ -7,11 +7,13 @@ import { InventoryData, Inventory } from "@/types";
 const EditInventoryForm = ({
   setInventories,
   id,
+  inventory,
 }: {
   setInventories: React.Dispatch<React.SetStateAction<Inventory[]>>;
   id: string;
+  inventory: Inventory;
 }) => {
-  const { register, handleSubmit } = useForm<InventoryData>();
+  const { register, handleSubmit } = useForm<InventoryData>()
 
   const onSubmit = (data: InventoryData) => {
     axios.patch(`/api/inventory/${id}`, data).then((response) => {
@@ -24,11 +26,11 @@ const EditInventoryForm = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <label>name</label>
-      <input type="text" {...register("name")} />
+      <input type="text" defaultValue={inventory.name} {...register("name")} />
       <label>description</label>
-      <input type="text" {...register("description")} />
+      <input type="text" defaultValue={inventory.description} {...register("description")} />
       <label>quantity</label>
-      <input type="number" {...register("quantity")} />
+      <input type="number" defaultValue={inventory.quantity} {...register("quantity")} />
       <button type="submit">EDIT</button>
     </form>
   );
